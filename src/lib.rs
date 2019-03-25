@@ -1,13 +1,16 @@
 mod utils;
 
+extern crate image;
 extern crate num_complex;
 
 use cfg_if::cfg_if;
 use wasm_bindgen::prelude::*;
 use num_complex::Complex;
+use image::ColorType;
+use image::png::PNGEncoder;
 
 use std::str::FromStr;
-
+use std::io::Write;
 
 cfg_if::cfg_if! {
     // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
@@ -58,7 +61,7 @@ impl Mandelbrot {
         }
     }
 
-    pub fn render(&self) -> () {
+    pub fn render(&self) -> Vec<u8> {
         let mut pixels = vec![0; self.width * self.height];
 
         for row in 0 .. self.height {
@@ -75,6 +78,14 @@ impl Mandelbrot {
                 };
             }
         }
+
+        let mut png_buffer = Vec::new();
+
+        PNGEncoder::new(png_buffer.by_ref())
+            .encode(&pixels, self.width as u32, self.height as u32, ColorType::Gray(8))
+            .expect("error encoding png");
+
+        png_buffer
     }
 
     fn pixel_to_point(&self,
