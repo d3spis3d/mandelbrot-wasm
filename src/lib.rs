@@ -21,7 +21,7 @@ cfg_if::cfg_if! {
     }
 }
 
-fn parse_pair<T: FromStr>(s: &str, separator: char) -> Option<(T, T)> {
+fn parse_pair<T: FromStr>(s: String, separator: char) -> Option<(T, T)> {
     match s.find(separator) {
         None => None,
         Some(index) => {
@@ -33,7 +33,7 @@ fn parse_pair<T: FromStr>(s: &str, separator: char) -> Option<(T, T)> {
     }
 }
 
-fn parse_complex(s: &str) -> Option<Complex<f64>> {
+fn parse_complex(s: String) -> Option<Complex<f64>> {
     match parse_pair(s, ',') {
         Some((re, im)) => Some(Complex { re, im }),
         None => None,
@@ -56,8 +56,8 @@ impl Mandelbrot {
         Mandelbrot {
             width,
             height,
-            upper_left: parse_complex(&upper_left).expect("error parsing upper_left"),
-            lower_right: parse_complex(&lower_right).expect("error parsing lower_right"),
+            upper_left: parse_complex(upper_left).expect("error parsing upper_left"),
+            lower_right: parse_complex(lower_right).expect("error parsing lower_right"),
         }
     }
 
