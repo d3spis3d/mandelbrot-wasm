@@ -87,10 +87,7 @@ impl Mandelbrot {
             }
         }
 
-        let mut png_buffer = {
-            let _timer = utils::Timer::new("allocate png buffer");
-            vec![0; self.width * self.height]
-        };
+        let mut png_buffer = Vec::new();
 
         {
             let _timer = utils::Timer::new("encode pixels to buffer");
