@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Mandelbrot</title>
+    <style>
+      .form {
+        width: 500px;
+      }
+
+      .form-element {
+        margin: 10px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form" id="mandelbrot-form">
+      <h1>Generate Mandelbrot Set Image</h1>
+      <form>
+        <div class="form-element">
+          <label>Width (px)</label>
+          <input type="number">
+        </div>
+        <div class="form-element">
+          <label>Height (px)</label>
+          <input type="number" name="height">
+        </div>
+        <div class="form-element">
+          <label>Upper left corner complex point (e.g. -1.20,0.35)</label>
+          <input name="upperLeft">
+        </div>
+        <div class="form-element">
+          <label>Lower right corner complex point (e.g -1,0.20)</label>
+          <input name="lowerRight">
+        </div>
+        <button type="submit" id="submit">Generate and Download</button>
+      </form>
+      <h2 class="hidden" id="generating">Generating..</h2>
+    </div>
+  <script type="text/javascript" src="bundle.js"></script></body>
+</html>
