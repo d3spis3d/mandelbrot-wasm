@@ -62,28 +62,42 @@ impl Mandelbrot {
     }
 
     pub fn render(&self) -> Vec<u8> {
-        let mut pixels = vec![0; self.width * self.height];
+        let _timer = utils::Timer::new("Mandelbrot::render");
 
-        for row in 0 .. self.height {
-            for column in 0 .. self.width {
-                let point = self.pixel_to_point(
-                    (self.width, self.height),
-                    (column, row),
-                    self.upper_left,
-                    self.lower_right
-                );
-                pixels[row * self.width + column] = match self.calculate_in_set(point, 255) {
-                    None => 0,
-                    Some(count) => 255 - count as u8
-                };
+        let mut pixels = {
+            let _timer = utils::Timer::new("allocate pixels vec");
+            vec![0; self.width * self.height]
+        };
+
+        {
+            let _timer = utils::Timer::new("calculate pixel values for complex space");
+            for row in 0 .. self.height {
+                for column in 0 .. self.width {
+                    let point = self.pixel_to_point(
+                        (self.width, self.height),
+                        (column, row),
+                        self.upper_left,
+                        self.lower_right
+                    );
+                    pixels[row * self.width + column] = match self.calculate_in_set(point, 255) {
+                        None => 0,
+                        Some(count) => 255 - count as u8
+                    };
+                }
             }
         }
 
-        let mut png_buffer = Vec::new();
+        let mut png_buffer = {
+            let _timer = utils::Timer::new("allocate png buffer");
+            vec![0; self.width * self.height]
+        };
 
-        PNGEncoder::new(png_buffer.by_ref())
-            .encode(&pixels, self.width as u32, self.height as u32, ColorType::Gray(8))
-            .expect("error encoding png");
+        {
+            let _timer = utils::Timer::new("encode pixels to buffer");
+            PNGEncoder::new(png_buffer.by_ref())
+                .encode(&pixels, self.width as u32, self.height as u32, ColorType::Gray(8))
+                .expect("error encoding png");
+        }
 
         png_buffer
     }
