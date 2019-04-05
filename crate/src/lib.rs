@@ -47,7 +47,7 @@ pub struct Mandelbrot {
     height: usize,
     upper_left: Complex<f64>,
     lower_right: Complex<f64>,
-
+    png_buffer: Vec<u8>,
 }
 
 #[wasm_bindgen]
@@ -58,10 +58,11 @@ impl Mandelbrot {
             height,
             upper_left: parse_complex(upper_left).expect("error parsing upper_left"),
             lower_right: parse_complex(lower_right).expect("error parsing lower_right"),
+            png_buffer: Vec::new(),
         }
     }
 
-    pub fn render(&self) -> Vec<u8> {
+    pub fn render(&mut self) -> *const u8 {
         let _timer = utils::Timer::new("Mandelbrot::render");
 
         let mut pixels = {
@@ -87,16 +88,18 @@ impl Mandelbrot {
             }
         }
 
-        let mut png_buffer = Vec::new();
-
         {
             let _timer = utils::Timer::new("encode pixels to buffer");
-            PNGEncoder::new(png_buffer.by_ref())
+            PNGEncoder::new(self.png_buffer.by_ref())
                 .encode(&pixels, self.width as u32, self.height as u32, ColorType::Gray(8))
                 .expect("error encoding png");
         }
 
-        png_buffer
+        self.png_buffer.as_ptr()
+    }
+
+    pub fn png_size(&self) -> usize {
+        self.png_buffer.len()
     }
 
     fn pixel_to_point(&self,
